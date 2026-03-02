@@ -1,0 +1,7 @@
+node_modules/
+output/pcbs/fp-info-cache
+output/pcbs/*.kicad_prl
+output/pcbs/*.bak*
+*.log
+C:\Users\*
+.tldr/

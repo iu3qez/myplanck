@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$TOOL_INPUT\" | grep -q '\\.kicad_pcb'; then echo 'BLOCK: Do not edit .kicad_pcb files directly. Use KiCad MCP tools or ergogen regeneration (/ergogen-regen). Direct edits can corrupt footprint layers.' >&2; exit 2; fi"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "paplay /usr/share/sounds/freedesktop/stereo/message.oga 2>/dev/null || aplay /usr/share/sounds/freedesktop/stereo/message.oga 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}

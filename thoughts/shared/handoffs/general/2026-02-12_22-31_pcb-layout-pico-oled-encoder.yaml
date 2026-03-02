@@ -1,0 +1,104 @@
+---
+session: general
+date: 2026-02-12
+status: partial
+outcome: PARTIAL_PLUS
+---
+
+goal: Create KiCad project for 4x12 Planck keyboard with Pico 2, OLED, encoder
+now: Place Pico SMD (B.Cu), OLED 1.3" (F.Cu rotated 90), encoder (F.Cu) in right extension - USE PCBNEW NOT manual file edits
+
+test: "Open /home/sf/src/myplanck/output/pcbs/p48v2.kicad_pcb in pcbnew - verify clean board with 48 switches/LEDs/diodes"
+
+done_this_session:
+  - task: Fixed ergogen config - renamed to folder mode, downloaded ceoloide footprints
+    files: [config.yaml, footprints/ceoloide/switch_choc_v1_v2.js, footprints/ceoloide/led_sk6812mini-e.js, footprints/ceoloide/diode_tht_sod123.js]
+  - task: Rewrote config from direct-pin to 4x12 matrix with diodes
+    files: [config.yaml]
+  - task: Fixed outline from 418x123mm (wrong) to 220x72mm (correct size for Planck)
+    files: [config.yaml]
+  - task: Installed KiCad libraries and configured sym-lib-table/fp-lib-table
+    files: [~/.config/kicad/9.0/sym-lib-table, ~/.config/kicad/9.0/fp-lib-table]
+  - task: Identified component placement strategy - right side extension for Pico/OLED/encoder
+    files: []
+  - task: Documented KiCad MCP server bugs
+    files: [/home/sf/src/KiCAD-MCP-Server/bug.md]
+
+blockers:
+  - KiCad MCP place_component breaks after delete cycles (FootprintLoad swig error)
+  - MCP search_footprints returns "undefined" for all results
+  - Manual PCB file editing causes layer corruption on footprints - DO NOT DO THIS
+
+questions:
+  - Should the board outline extension be done in ergogen config.yaml or modified in pcbnew?
+  - Exact Pico position in extension to avoid switch through-hole interference
+
+decisions:
+  - matrix_with_diodes: 4x12 matrix (16 GPIO) instead of direct-pin (48 GPIO) - allows Pico 2 which has 30 GPIO
+  - pico_smd: Use Module:RaspberryPi_Pico_Common_SMD (castellated) not THT - THT holes interfere with switch holes
+  - dual_side_layout: Pico on B.Cu, OLED on F.Cu - allows overlap, minimizes extension width
+  - right_extension: 30mm extension on right side for Pico+OLED+encoder, board 250x72mm total
+  - led_vbus: LED VCC direct from VBUS 5V (bypasses 3.3V regulator, handles 2.88A max)
+  - oled_rotated: OLED 1.3" should be rotated 90 degrees to fit in narrow extension
+
+findings:
+  - ergogen_outline_bug: "size: [12kx+4, 4ky+4]" creates 220x72 rect per KEY then takes bounding box = 418x123mm. Correct is "size: [kx+4, ky+4]"
+  - pico_smd_origin: SMD footprint origin is at CENTER (not pad 1). Pads at x=+/-9.69, y=-24.13 to +24.13
+  - switch_holes: Each switch has 5 through-holes (center 5mm, 2x alignment 1.9mm, stabilizer 1.6mm, boss 3mm)
+  - zero_conflict_zone: Pico fits horizontally at y<-106 or vertically at y<-140 with 0 switch hole conflicts
+  - mcp_footprint_cache: MCP caches library paths at startup - must restart to pick up newly installed libs
+
+worked:
+  - Ergogen folder mode with ceoloide footprints works perfectly
+  - MCP place_component works for initial placement (before delete cycles)
+  - MCP open_project/save_project/find_component/move_component all work reliably
+  - Board outline calculation from switch positions
+
+failed:
+  - Manual footprint insertion into PCB file - layer handling is complex, causes corruption
+  - MCP place_component after delete+re-place cycles - swig FootprintLoad error
+  - MCP search_footprints/list_library_footprints - always returns undefined
+  - Placing Pico over switch area - even SMD body blocks through-holes physically
+
+next:
+  - Regenerate clean PCB with ergogen (just run npx ergogen . -o output --clean)
+  - Extend board outline to 250x72mm - either via ergogen config or pcbnew Edit > Board Setup
+  - Place components IN PCBNEW (not via file edits) - Pico SMD on B.Cu, OLED rotated 90 on F.Cu, EC11 on F.Cu
+  - Add nets for new components (LED_DATA, VBUS, I2C SDA/SCL, ENC_A/B/SW)
+  - Assign nets to Pico pins (COL0-11=GP0-11, ROW0-3=GP12-15, LED_DATA=GP16, I2C=GP20-21, ENC=GP17-19)
+  - Create schematic (.kicad_sch)
+  - Route traces
+  - Run DRC
+  - Add bypass capacitors for LED power
+
+files:
+  created:
+    - footprints/ceoloide/switch_choc_v1_v2.js
+    - footprints/ceoloide/led_sk6812mini-e.js
+    - footprints/ceoloide/diode_tht_sod123.js
+    - /home/sf/src/KiCAD-MCP-Server/bug.md
+  modified:
+    - config.yaml (renamed from ergogen.yaml, rewritten for matrix+diodes, fixed outline)
+    - output/pcbs/p48v2.kicad_pcb (regenerated multiple times)
+    - ~/.config/kicad/9.0/sym-lib-table
+    - ~/.config/kicad/9.0/fp-lib-table
+
+pin_mapping:
+  COL0-COL11: GPIO0-GPIO11 (Pico pads 1,2,4,5,6,7,9,10,11,12,14,15)
+  ROW0-ROW3: GPIO12-GPIO15 (Pico pads 16,17,19,20)
+  LED_DATA: GPIO16 (Pico pad 21)
+  ENC_A: GPIO17 (Pico pad 22)
+  ENC_B: GPIO18 (Pico pad 24)
+  ENC_SW: GPIO19 (Pico pad 25)
+  I2C_SDA: GPIO20 (Pico pad 26)
+  I2C_SCL: GPIO21 (Pico pad 27)
+  VBUS_LED: VBUS (Pico pad 40)
+  GND: pads 3,8,13,18,23,28,33,38
+
+kicad_footprints:
+  pico: "Module:RaspberryPi_Pico_Common_SMD"
+  oled: "Display:Adafruit_SSD1306_No_Mounting_Holes"
+  encoder: "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
+
+kicad_symbols:
+  pico: "MCU_Module:RaspberryPi_Pico"

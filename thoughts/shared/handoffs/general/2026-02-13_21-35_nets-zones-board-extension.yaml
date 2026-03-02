@@ -1,0 +1,103 @@
+---
+session: general
+date: 2026-02-13
+status: partial
+outcome: PARTIAL_PLUS
+---
+
+goal: Extended board outline, placed MCU/OLED/encoder, assigned all nets and added GND zones
+now: Assign OLED pad nets manually in pcbnew, fill zones (B key), then route all traces
+
+test: "Open /home/sf/src/myplanck/output/pcbs/p48v2.kicad_pcb in pcbnew - verify 48 switches + Pico THT + OLED + encoder with net assignments"
+
+done_this_session:
+  - task: Extended board outline from 220x72mm to 255x72mm (35mm right extension for Pico/OLED/encoder)
+    files: [config.yaml, output/pcbs/p48v2.kicad_pcb]
+  - task: Updated ergogen config with extension rectangle using matrix_CR_11_0 reference point
+    files: [config.yaml]
+  - task: Regenerated clean PCB with ergogen (npx ergogen . -o output --clean)
+    files: [output/pcbs/p48v2.kicad_pcb]
+  - task: Placed Pico THT (U1) on B.Cu, OLED SSD1306 (U2) on F.Cu rotated 90°, EC11 encoder (RE1) on F.Cu
+    files: [output/pcbs/p48v2.kicad_pcb]
+  - task: User repositioned components in pcbnew - Pico THT at (330.89, -85.32) rot 180° B.Cu, encoder at (318.69, -63.73) rot -90° B.Cu, OLED at (333.39, -18.77) rot 180° F.Cu
+    files: [output/pcbs/p48v2.kicad_pcb]
+  - task: User swapped Pico from SMD to THT footprint (Module:RaspberryPi_Pico_Common_THT)
+    files: [output/pcbs/p48v2.kicad_pcb]
+  - task: Added 7 new nets - LED_DATA(116), VBUS(117), I2C_SDA(118), I2C_SCL(119), ENC_A(120), ENC_B(121), ENC_SW(122)
+    files: [output/pcbs/p48v2.kicad_pcb]
+  - task: Assigned all 32 Pico THT pad nets via Python script (COL0-11, ROW0-3, LED_DATA, ENC_A/B/SW, I2C_SDA/SCL, VCC, VBUS, GND)
+    files: [output/pcbs/p48v2.kicad_pcb]
+  - task: Assigned encoder pad nets (A→ENC_A, B→ENC_B, C→GND, S1→ENC_SW, S2→GND, MP→GND)
+    files: [output/pcbs/p48v2.kicad_pcb]
+  - task: Set design rules - Default 0.25mm trace/0.2mm clearance, Power class 0.5mm trace/0.3mm clearance
+    files: [output/pcbs/p48v2.kicad_pcb]
+  - task: Added GND copper pour zones on both F.Cu and B.Cu covering full board
+    files: [output/pcbs/p48v2.kicad_pcb]
+
+blockers:
+  - OLED (U2) pad nets NOT assigned - Adafruit SSD1306 pinout varies by revision, needs manual verification
+  - KiCad MCP add_zone and add_net_class commands not supported - had to edit PCB file directly
+  - Zones added but not filled - user must press B in pcbnew to fill
+
+questions:
+  - Which Adafruit SSD1306 1.3" revision is being used? Pinout order differs between revisions (SDA/SCL first vs GND/Vin first)
+  - Should bypass caps for LED power be added now or after routing?
+
+decisions:
+  - pico_tht: User chose THT over SMD after testing placement - THT pins provide mechanical strength
+  - encoder_b_cu: User flipped encoder to B.Cu to avoid contact interference
+  - board_255mm: Extended to 255mm (was 250mm in previous handoff) - OLED needed 5mm more space
+  - gnd_both_layers: GND copper pour on both F.Cu and B.Cu for better ground plane
+
+findings:
+  - ergogen_point_names: "Ergogen v4 names points using colrow values, not column/row names. e.g. matrix_CR_11_0 not matrix_outer_r_top"
+  - mcp_zone_unsupported: "MCP swig backend doesn't support add_zone or add_net_class - must edit PCB file directly"
+  - pad_net_script: "Python script for bulk pad net assignment works well but can miss the last pad in a footprint if it's immediately followed by a zone block - verify manually"
+  - outline_edit_safe: "Editing Edge.Cuts gr_line/gr_arc coordinates directly in PCB file works cleanly - just update x coords and arc midpoints"
+
+worked:
+  - MCP place_component works reliably for initial placement (fixed since last session)
+  - MCP search_footprints now returns real results (was returning undefined before)
+  - Python script for bulk pad net assignment (32 Pico pads + 6 encoder pads in one pass)
+  - Direct PCB file editing for zones, net classes, and outline extension
+  - Ergogen outline extension using where ref + shift for union rectangle
+
+failed:
+  - MCP add_zone command - not supported on swig backend
+  - MCP add_net_class command - not supported on swig backend
+  - MCP get_board_2d_view - returns blank image on swig backend
+
+next:
+  - Assign OLED (U2) pad nets in pcbnew - identify which revision's pinout (SDA/SCL/VCC/GND)
+  - Fill zones in pcbnew (Edit > Fill All Zones or press B)
+  - Route all traces manually in pcbnew
+  - Run DRC
+  - Add bypass capacitors for LED power (100nF per ~8 LEDs recommended)
+  - Create schematic (.kicad_sch) to match PCB
+  - Consider adding reset button for Pico
+
+files:
+  modified:
+    - config.yaml (added extension rectangle outline with matrix_CR_11_0 ref, 39x72mm union rect)
+    - output/pcbs/p48v2.kicad_pcb (extended outline to 255mm, placed 3 components, assigned nets, added zones, added net classes)
+
+pin_mapping:
+  COL0-COL11: GPIO0-GPIO11 (Pico pins 1,2,4,5,6,7,9,10,11,12,14,15)
+  ROW0-ROW3: GPIO12-GPIO15 (Pico pins 16,17,19,20)
+  LED_DATA: GPIO16 (Pico pin 21)
+  ENC_A: GPIO17 (Pico pin 22)
+  ENC_B: GPIO18 (Pico pin 24)
+  ENC_SW: GPIO19 (Pico pin 25)
+  I2C_SDA: GPIO20 (Pico pin 26)
+  I2C_SCL: GPIO21 (Pico pin 27)
+  VBUS: Pico pin 40
+  VCC_3V3: Pico pin 36
+  GND: Pico pins 3,8,13,18,23,28,33,38
+
+net_numbers:
+  COL0: 1, COL1: 7, COL2: 12, COL3: 17, COL4: 22, COL5: 27
+  COL6: 32, COL7: 37, COL8: 42, COL9: 47, COL10: 52, COL11: 57
+  ROW0: 65, ROW1: 64, ROW2: 63, ROW3: 62
+  GND: 3, VCC: 66
+  LED_DATA: 116, VBUS: 117, I2C_SDA: 118, I2C_SCL: 119
+  ENC_A: 120, ENC_B: 121, ENC_SW: 122
