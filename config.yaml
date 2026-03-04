@@ -319,11 +319,11 @@ pcbs:
         what: ceoloide/diode_tht_sod123
         where: true
         adjust:
-          shift: [0, -8.5]
+          shift: [0, 9.5]
         params:
           from: "{{colrow}}"
           to: "{{row_net}}"
-          side: B
+          side: F
       led:
         what: ceoloide/led_sk6812mini-e
         where: true
@@ -342,3 +342,110 @@ pcbs:
           vcc_trace_width: 0.25
           via_size: 0.8
           via_drill: 0.4
+      pico:
+        what: ceoloide/pico
+        where:
+          ref: matrix_CR_11_0
+          shift: [26.5, -16]
+          rotate: 90
+        params:
+          orientation: down
+          GP0: COL0
+          GP1: COL1
+          GP2: COL2
+          GP3: COL3
+          GP4: COL4
+          GP5: COL5
+          GP6: COL6
+          GP7: COL7
+          GP8: COL8
+          GP9: COL9
+          GP10: COL10
+          GP11: COL11
+          GP12: ROW0
+          GP13: ROW1
+          GP14: ROW2
+          GP15: ROW3
+          GP16: LED0
+          GP17: ENC_A
+          GP18: ENC_B
+          GP19: ENC_SW
+          GP20: I2C_SDA
+          GP21: I2C_SCL
+      hole_tl:
+        what: ceoloide/mountingholem2
+        where:
+          ref: matrix_CR_0_0
+          shift: [-8.5, 8]
+        params:
+          net: GND
+      hole_tr:
+        what: ceoloide/mountingholem2
+        where:
+          ref: matrix_CR_11_0
+          shift: [8.5, 8]
+        params:
+          net: GND
+      hole_bl:
+        what: ceoloide/mountingholem2
+        where:
+          ref: matrix_CR_0_3
+          shift: [-8.5, -8]
+        params:
+          net: GND
+      hole_br:
+        what: ceoloide/mountingholem2
+        where:
+          ref: matrix_CR_11_3
+          shift: [8.5, -8]
+        params:
+          net: GND
+      hole_ml:
+        what: ceoloide/mountingholem2
+        where:
+          ref: matrix_CR_0_1
+          shift: [-8.5, -8.5]
+        params:
+          net: GND
+      hole_mc:
+        what: ceoloide/mountingholem2
+        where:
+          ref: matrix_CR_5_1
+          shift: [9, -8.5]
+        params:
+          net: GND
+      hole_mr:
+        what: ceoloide/mountingholem2
+        where:
+          ref: matrix_CR_11_1
+          shift: [8.5, -8.5]
+        params:
+          net: GND
+      hole_tc:
+        what: ceoloide/mountingholem2
+        where:
+          ref: matrix_CR_5_0
+          shift: [9, 8]
+        params:
+          net: GND
+      hole_bc:
+        what: ceoloide/mountingholem2
+        where:
+          ref: matrix_CR_5_3
+          shift: [9, -8]
+        params:
+          net: GND
+      hole_ext_top:
+        what: ceoloide/mountingholem2
+        where:
+          ref: matrix_CR_11_0
+          shift: [43, 8]
+        params:
+          net: GND
+      hole_ext_bot:
+        what: ceoloide/mountingholem2
+        where:
+          ref: matrix_CR_11_3
+          shift: [43, -8]
+        params:
+          net: GND
