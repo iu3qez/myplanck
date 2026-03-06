@@ -350,6 +350,8 @@ pcbs:
           rotate: 90
         params:
           orientation: down
+          castellated: true
+          side: B
           GP0: COL0
           GP1: COL1
           GP2: COL2
@@ -449,3 +451,44 @@ pcbs:
           shift: [43, -8]
         params:
           net: GND
+      usb_c_power:
+        what: ceoloide/usb_c_hro_type_c_31_m_12
+        where:
+          ref: matrix_CR_11_0
+          shift: [26.5, -45]
+          rotate: 180
+        params:
+          VBUS: VCC
+          GND: GND
+          CC1: USB2_CC1
+          CC2: USB2_CC2
+          DP: ''
+          DN: ''
+          SBU1: ''
+          SBU2: ''
+          SHIELD: GND
+      r_cc1:
+        what: ceoloide/resistor_0603
+        where:
+          ref: matrix_CR_11_0
+          shift: [22, -43]
+        params:
+          from: USB2_CC1
+          to: GND
+      r_cc2:
+        what: ceoloide/resistor_0603
+        where:
+          ref: matrix_CR_11_0
+          shift: [22, -47]
+        params:
+          from: USB2_CC2
+          to: GND
+      d_backfeed:
+        what: ceoloide/diode_tht_sod123
+        where:
+          ref: matrix_CR_11_0
+          shift: [31, -43]
+        params:
+          side: F
+          from: VBUS
+          to: VCC
