@@ -85,17 +85,18 @@ module.exports = {
         (fp_line (start -25.5 -10.5) (end -25.5 10.5) (layer "F.Fab") (stroke (width 0.1) (type solid)))
       `
 
-    // Castellated SMD pads: at board edge (±10.5mm), 1.6mm x 0.8mm roundrect
+    // Castellated SMD pads: at board edge (±8.89mm), 3.2x1.6mm roundrect
+    //   Based on ki-lime-pi HandSolder_Castellated reference
     // THT pads: at pin header positions (±8.89mm), 1.75mm circle with 1.09mm drill
     const castellated = p.castellated
     const layer = p.side === 'B' ? 'B' : 'F'
     const cu = `${layer}.Cu`
     const mask = `${layer}.Mask`
-    const paste = `${layer}.Paste`
 
     function pad(num, x, y_sign, y_abs, net) {
       if (castellated) {
-        return `(pad "${num}" smd roundrect (at ${x} ${y_sign}10.5 ${p.r}) (size 1.6 0.8) (layers "${cu}" "${mask}" "${paste}") (roundrect_rratio 0.25) ${net})`
+        // 4.8x1.6mm roundrect, centered 0.8mm outside board edge for more exposed area
+        return `(pad "${num}" smd roundrect (at ${x} ${y_sign}11.3 ${p.r}) (size 1.6 4.8) (layers "${cu}" "${mask}") (roundrect_rratio 0.33) ${net})`
       } else {
         return `(pad "${num}" thru_hole circle (at ${x} ${y_sign}${y_abs} ${p.r}) (size 1.7526 1.7526) (drill 1.0922) (layers "*.Cu" "*.Mask") ${net})`
       }
