@@ -3,11 +3,11 @@
 # Features: Choc v1/v2 hotswap, per-key SK6812-MINI-E RGB LEDs
 # Matrix: 4 rows x 12 columns with diodes
 #
-# LED chain order (serpentine):
-#   Row top    (L→R): LED 0-11
-#   Row home   (R→L): LED 12-23
-#   Row bottom (L→R): LED 24-35
-#   Row mod    (R→L): LED 36-47
+# LED chain order (zigzag, top-right descending):
+#   Row top    (R→L): LED 0-11   outer_r → ... → outer_l
+#   Row home   (L→R): LED 12-23  outer_l → ... → outer_r
+#   Row bottom (R→L): LED 24-35  outer_r → ... → outer_l
+#   Row mod    (L→R): LED 36-47  outer_l → ... → outer_r (near Pico)
 # MCU LED data pin: GP16
 
 meta:
@@ -32,240 +32,240 @@ points:
           rows:
             mod:
               colrow: CR_0_3
-              led_din: LED47
-              led_dout: LED48
+              led_din: LED36
+              led_dout: LED37
             bottom:
               colrow: CR_0_2
-              led_din: LED24
-              led_dout: LED25
+              led_din: LED35
+              led_dout: LED36
             home:
               colrow: CR_0_1
-              led_din: LED23
-              led_dout: LED24
+              led_din: LED12
+              led_dout: LED13
             top:
               colrow: CR_0_0
-              led_din: LED0
-              led_dout: LED1
+              led_din: LED11
+              led_dout: LED12
         pinky_l:
           key:
             column_net: COL1
           rows:
             mod:
               colrow: CR_1_3
-              led_din: LED46
-              led_dout: LED47
+              led_din: LED37
+              led_dout: LED38
             bottom:
               colrow: CR_1_2
-              led_din: LED25
-              led_dout: LED26
+              led_din: LED34
+              led_dout: LED35
             home:
               colrow: CR_1_1
-              led_din: LED22
-              led_dout: LED23
+              led_din: LED13
+              led_dout: LED14
             top:
               colrow: CR_1_0
-              led_din: LED1
-              led_dout: LED2
+              led_din: LED10
+              led_dout: LED11
         ring_l:
           key:
             column_net: COL2
           rows:
             mod:
               colrow: CR_2_3
-              led_din: LED45
-              led_dout: LED46
+              led_din: LED38
+              led_dout: LED39
             bottom:
               colrow: CR_2_2
-              led_din: LED26
-              led_dout: LED27
+              led_din: LED33
+              led_dout: LED34
             home:
               colrow: CR_2_1
-              led_din: LED21
-              led_dout: LED22
+              led_din: LED14
+              led_dout: LED15
             top:
               colrow: CR_2_0
-              led_din: LED2
-              led_dout: LED3
+              led_din: LED9
+              led_dout: LED10
         middle_l:
           key:
             column_net: COL3
           rows:
             mod:
               colrow: CR_3_3
-              led_din: LED44
-              led_dout: LED45
+              led_din: LED39
+              led_dout: LED40
             bottom:
               colrow: CR_3_2
-              led_din: LED27
-              led_dout: LED28
+              led_din: LED32
+              led_dout: LED33
             home:
               colrow: CR_3_1
-              led_din: LED20
-              led_dout: LED21
+              led_din: LED15
+              led_dout: LED16
             top:
               colrow: CR_3_0
-              led_din: LED3
-              led_dout: LED4
+              led_din: LED8
+              led_dout: LED9
         index_l:
           key:
             column_net: COL4
           rows:
             mod:
               colrow: CR_4_3
-              led_din: LED43
-              led_dout: LED44
+              led_din: LED40
+              led_dout: LED41
             bottom:
               colrow: CR_4_2
-              led_din: LED28
-              led_dout: LED29
+              led_din: LED31
+              led_dout: LED32
             home:
               colrow: CR_4_1
-              led_din: LED19
-              led_dout: LED20
+              led_din: LED16
+              led_dout: LED17
             top:
               colrow: CR_4_0
-              led_din: LED4
-              led_dout: LED5
+              led_din: LED7
+              led_dout: LED8
         inner_l:
           key:
             column_net: COL5
           rows:
             mod:
               colrow: CR_5_3
-              led_din: LED42
-              led_dout: LED43
+              led_din: LED41
+              led_dout: LED42
             bottom:
               colrow: CR_5_2
-              led_din: LED29
-              led_dout: LED30
+              led_din: LED30
+              led_dout: LED31
             home:
               colrow: CR_5_1
-              led_din: LED18
-              led_dout: LED19
+              led_din: LED17
+              led_dout: LED18
             top:
               colrow: CR_5_0
-              led_din: LED5
-              led_dout: LED6
+              led_din: LED6
+              led_dout: LED7
         inner_r:
           key:
             column_net: COL6
           rows:
             mod:
               colrow: CR_6_3
-              led_din: LED41
-              led_dout: LED42
+              led_din: LED42
+              led_dout: LED43
             bottom:
               colrow: CR_6_2
-              led_din: LED30
-              led_dout: LED31
+              led_din: LED29
+              led_dout: LED30
             home:
               colrow: CR_6_1
-              led_din: LED17
-              led_dout: LED18
+              led_din: LED18
+              led_dout: LED19
             top:
               colrow: CR_6_0
-              led_din: LED6
-              led_dout: LED7
+              led_din: LED5
+              led_dout: LED6
         index_r:
           key:
             column_net: COL7
           rows:
             mod:
               colrow: CR_7_3
-              led_din: LED40
-              led_dout: LED41
+              led_din: LED43
+              led_dout: LED44
             bottom:
               colrow: CR_7_2
-              led_din: LED31
-              led_dout: LED32
+              led_din: LED28
+              led_dout: LED29
             home:
               colrow: CR_7_1
-              led_din: LED16
-              led_dout: LED17
+              led_din: LED19
+              led_dout: LED20
             top:
               colrow: CR_7_0
-              led_din: LED7
-              led_dout: LED8
+              led_din: LED4
+              led_dout: LED5
         middle_r:
           key:
             column_net: COL8
           rows:
             mod:
               colrow: CR_8_3
-              led_din: LED39
-              led_dout: LED40
+              led_din: LED44
+              led_dout: LED45
             bottom:
               colrow: CR_8_2
-              led_din: LED32
-              led_dout: LED33
+              led_din: LED27
+              led_dout: LED28
             home:
               colrow: CR_8_1
-              led_din: LED15
-              led_dout: LED16
+              led_din: LED20
+              led_dout: LED21
             top:
               colrow: CR_8_0
-              led_din: LED8
-              led_dout: LED9
+              led_din: LED3
+              led_dout: LED4
         ring_r:
           key:
             column_net: COL9
           rows:
             mod:
               colrow: CR_9_3
-              led_din: LED38
-              led_dout: LED39
+              led_din: LED45
+              led_dout: LED46
             bottom:
               colrow: CR_9_2
-              led_din: LED33
-              led_dout: LED34
+              led_din: LED26
+              led_dout: LED27
             home:
               colrow: CR_9_1
-              led_din: LED14
-              led_dout: LED15
+              led_din: LED21
+              led_dout: LED22
             top:
               colrow: CR_9_0
-              led_din: LED9
-              led_dout: LED10
+              led_din: LED2
+              led_dout: LED3
         pinky_r:
           key:
             column_net: COL10
           rows:
             mod:
               colrow: CR_10_3
-              led_din: LED37
-              led_dout: LED38
+              led_din: LED46
+              led_dout: LED47
             bottom:
               colrow: CR_10_2
-              led_din: LED34
-              led_dout: LED35
+              led_din: LED25
+              led_dout: LED26
             home:
               colrow: CR_10_1
-              led_din: LED13
-              led_dout: LED14
+              led_din: LED22
+              led_dout: LED23
             top:
               colrow: CR_10_0
-              led_din: LED10
-              led_dout: LED11
+              led_din: LED1
+              led_dout: LED2
         outer_r:
           key:
             column_net: COL11
           rows:
             mod:
               colrow: CR_11_3
-              led_din: LED36
-              led_dout: LED37
+              led_din: LED47
+              led_dout: LED48
             bottom:
               colrow: CR_11_2
-              led_din: LED35
-              led_dout: LED36
+              led_din: LED24
+              led_dout: LED25
             home:
               colrow: CR_11_1
-              led_din: LED12
-              led_dout: LED13
+              led_din: LED23
+              led_dout: LED24
             top:
               colrow: CR_11_0
-              led_din: LED11
-              led_dout: LED12
+              led_din: LED0
+              led_dout: LED1
       rows:
         mod:
           row_net: ROW3
@@ -324,9 +324,29 @@ pcbs:
           from: "{{colrow}}"
           to: "{{row_net}}"
           side: F
-      led:
+      led_top:
         what: ceoloide/led_sk6812mini-e
-        where: true
+        where: matrix_*_0
+        adjust:
+          shift: [0, -4.7]
+          rotate: 180
+        params:
+          P1: VCC
+          P2: "{{led_dout}}"
+          P3: GND
+          P4: "{{led_din}}"
+          side: B
+          reverse_mount: true
+          include_traces_vias: true
+          signal_trace_width: 0.25
+          gnd_trace_width: 0.25
+          vcc_trace_width: 0.25
+          via_size: 0.8
+          via_drill: 0.4
+          lcsc: C5149201
+      led_home:
+        what: ceoloide/led_sk6812mini-e
+        where: matrix_*_1
         adjust:
           shift: [0, -4.7]
         params:
@@ -342,6 +362,46 @@ pcbs:
           vcc_trace_width: 0.25
           via_size: 0.8
           via_drill: 0.4
+          lcsc: C5149201
+      led_bottom:
+        what: ceoloide/led_sk6812mini-e
+        where: matrix_*_2
+        adjust:
+          shift: [0, -4.7]
+          rotate: 180
+        params:
+          P1: VCC
+          P2: "{{led_dout}}"
+          P3: GND
+          P4: "{{led_din}}"
+          side: B
+          reverse_mount: true
+          include_traces_vias: true
+          signal_trace_width: 0.25
+          gnd_trace_width: 0.25
+          vcc_trace_width: 0.25
+          via_size: 0.8
+          via_drill: 0.4
+          lcsc: C5149201
+      led_mod:
+        what: ceoloide/led_sk6812mini-e
+        where: matrix_*_3
+        adjust:
+          shift: [0, -4.7]
+        params:
+          P1: VCC
+          P2: "{{led_dout}}"
+          P3: GND
+          P4: "{{led_din}}"
+          side: B
+          reverse_mount: true
+          include_traces_vias: true
+          signal_trace_width: 0.25
+          gnd_trace_width: 0.25
+          vcc_trace_width: 0.25
+          via_size: 0.8
+          via_drill: 0.4
+          lcsc: C5149201
       pico:
         what: ceoloide/pico
         where:
